@@ -1,21 +1,29 @@
-import { contextProps } from "@trpc/react-query/shared";
 import { z } from "zod";
 
 import {
   createTRPCRouter,
   publicProcedure,
-  protectedProcedure,
 } from "~/server/api/trpc";
 
 export const buildsRouter = createTRPCRouter({
   createBuild: publicProcedure
-    .input(z.object({ matchUp: z.string(), build: z.string() }))
+    .input(z.object({
+      matchUp: z.string(),
+      build: z.string(),
+      style: z.string(),
+      author: z.string().optional(),
+      title: z.string().optional(),
+      description: z.string().optional(),
+    }))
     .mutation(async({ input, ctx }) => {
-      //TODO: save to the database
-
       const build = await ctx.prisma.buildOrder.create({
         data: {
-          ...input,
+          matchUp: input.matchUp,
+          build: input.build,
+          style: input.style,
+          author: input.author,
+          title: input.title,
+          description: input.description,
         }
       })
       return build;
