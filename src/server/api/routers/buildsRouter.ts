@@ -38,7 +38,18 @@ export const buildsRouter = createTRPCRouter({
       }
     });
     return builds;
-  }),
+    }),
+  
+  getBuildById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const build = await ctx.prisma.buildOrder.findUnique({
+        where: {
+          id: input.id
+        }
+      });
+      return build;
+    })
 
   
 });
