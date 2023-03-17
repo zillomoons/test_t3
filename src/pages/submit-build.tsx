@@ -19,6 +19,28 @@ export const buildStyles = [
   cheeseBuildStyle,
 ];
 
+type races = "z" | "p" | "t";
+
+type TStep = {
+  name: string;
+  supply: number;
+};
+
+const units: Record<races, TStep[]> = {
+  z: [{ name: "drone", supply: 1 }],
+  p: [],
+  t: [],
+};
+const Structures: Record<races, TStep[]> = {
+  z: [
+    { name: "spawning pool", supply: -1 },
+    { name: "hatchery", supply: -1 },
+    { name: "extractor", supply: -1 },
+  ],
+  p: [],
+  t: [],
+};
+
 const SubmitBuildPage: NextPage = () => {
   const createBuildMutation = api.builds.createBuild.useMutation();
 
@@ -28,6 +50,7 @@ const SubmitBuildPage: NextPage = () => {
   const [author, setAuthor] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [supply, setSupply] = useState(12);
 
   const router = useRouter();
 
@@ -43,6 +66,11 @@ const SubmitBuildPage: NextPage = () => {
     });
     void router.push("/");
   };
+  function addToBuildOrder(stepName: TStep) {
+    setBuildOrder(build + "\n" + supply.toString() + " " + stepName.name);
+    setSupply(supply + stepName.supply);
+  }
+  const race = matchUp.split("v")[0];
   return (
     <>
       <Head>
@@ -133,21 +161,52 @@ const SubmitBuildPage: NextPage = () => {
               onChange={(e) => setDescription(e.target.value)}
             />
           </fieldset>
-          <fieldset className="w-3/4">
-            <label
-              htmlFor="build"
-              className="mb-2 block text-sm font-medium text-gray-900  dark:text-white"
-            >
-              Build Order
-            </label>
-            <textarea
-              id="build"
-              required
-              className="block h-96 w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-              value={build}
-              onChange={(e) => setBuildOrder(e.target.value)}
-            />
-          </fieldset>
+          <section className="flex w-3/4 gap-8">
+            <fieldset className="w-1/2">
+              <label
+                htmlFor="build"
+                className="mb-2 block text-sm font-medium text-gray-900  dark:text-white"
+              >
+                Build Order
+              </label>
+              <textarea
+                id="build"
+                required
+                className="block h-96 w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                value={build}
+                onChange={(e) => setBuildOrder(e.target.value)}
+              />
+            </fieldset>
+            <div className="grid w-1/2 grid-cols-2">
+              <div className="flex flex-col items-start gap-2">
+                <h3 className="mb-2 font-semibold">Units</h3>
+                {units[race as races].map((unit: TStep) => (
+                  <button
+                    key={unit.name}
+                    type="button"
+                    onClick={() => addToBuildOrder(unit)}
+                    className="text-sm"
+                  >
+                    {unit.name}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex flex-col items-start gap-2">
+                <h3 className="mb-2 font-semibold">Structures</h3>
+                {Structures[race as races].map(({ name, supply }: TStep) => (
+                  <button
+                    key={name}
+                    type="button"
+                    onClick={() => addToBuildOrder({ name, supply })}
+                    className="text-sm"
+                  >
+                    {name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
 
           <button
             type="submit"

@@ -1,7 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { RaceCard } from "~/pages/races";
 
 const FindBuildsPage: NextPage = () => {
   const { raceName } = useRouter().query as { raceName: string };
@@ -19,7 +18,7 @@ const FindBuildsPage: NextPage = () => {
           <p>(Select Opponent&apos;s Race)</p>
         </section>
         <ul className="grid grid-cols-3 gap-5">
-          <li>
+          {/* <li>
             <RaceCard
               isOpponent
               href={`/races/${raceName}/match-ups/zerg`}
@@ -42,7 +41,7 @@ const FindBuildsPage: NextPage = () => {
               raceImageSrc="/images/terran.jpg"
               raceName="Terran"
             />
-          </li>
+          </li> */}
         </ul>
       </main>
     </>
