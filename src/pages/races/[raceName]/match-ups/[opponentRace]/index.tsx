@@ -37,9 +37,11 @@ const FindBuildsPage: NextPage = () => {
     )
     .filter((build) =>
       search !== ""
-        ? build.author?.toLowerCase().includes(lowerCaseSearch) ||
-          build.title?.toLowerCase().includes(lowerCaseSearch) ||
-          build.description?.toLowerCase().includes(lowerCaseSearch)
+        ? ["author", "title", "description"].some((key) =>
+            ((build as Record<string, string>)[key] ?? "")
+              .toLowerCase()
+              .includes(lowerCaseSearch)
+          )
         : build
     );
 
@@ -54,27 +56,29 @@ const FindBuildsPage: NextPage = () => {
         <h1 className="text-4xl">
           {raceName} vs {opponentRace}
         </h1>
-        <form className="flex w-full flex-col gap-8">
-          <fieldset>
-            <Label htmlFor="searchInput">
-              Filter (by name, author or description)
-            </Label>
-            <Input
-              id="searchInput"
-              value={search}
-              className="w-1/3"
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </fieldset>
-          <BuildStyleSelect setBuildStyle={setBuildStyle} />
-        </form>
-        <section className="flex flex-col gap-4">
-          <h2 className="self-start text-2xl font-bold">Builds:</h2>
-          <div className="flex flex-wrap gap-4">
-            {filteredBuilds.map((build) => (
-              <BuildCard key={build.id} build={build} />
-            ))}
-          </div>
+        <section className="flex w-full gap-12">
+          <form className="flex w-1/4 min-w-[286px] flex-col gap-8">
+            <fieldset>
+              <Label htmlFor="searchInput">
+                Filter (by name, author or description)
+              </Label>
+              <Input
+                id="searchInput"
+                value={search}
+                className="w-1/3"
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </fieldset>
+            <BuildStyleSelect setBuildStyle={setBuildStyle} />
+          </form>
+          <section className="flex flex-col gap-4">
+            <h2 className="self-start text-xl font-bold">Builds:</h2>
+            <div className="flex flex-wrap gap-4">
+              {filteredBuilds.map((build) => (
+                <BuildCard key={build.id} build={build} />
+              ))}
+            </div>
+          </section>
         </section>
       </main>
     </>

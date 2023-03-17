@@ -11,8 +11,8 @@ const BuildStyleSelect = ({
       <h3 className="mb-2 text-sm font-medium text-white">
         Select Build Style
       </h3>
-      <ul className="w-full items-center rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:flex">
-        <li
+      <ul className="w-full items-center rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+        {/* <li
           key="all"
           className="w-full border-b border-gray-200 dark:border-gray-600 sm:border-b-0 sm:border-r"
         >
@@ -32,8 +32,8 @@ const BuildStyleSelect = ({
               all
             </label>
           </div>
-        </li>
-        {buildStyles.map((style, index) => (
+        </li> */}
+        {["all", ...buildStyles].map((style, index) => (
           <li
             key={index}
             className="w-full border-b border-gray-200 dark:border-gray-600 sm:border-b-0 sm:border-r"
