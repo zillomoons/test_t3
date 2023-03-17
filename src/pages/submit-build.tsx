@@ -2,6 +2,8 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import Input from "~/components/Input";
+import Label from "~/components/Label";
 
 import { api } from "~/utils/api";
 
@@ -106,45 +108,24 @@ const SubmitBuildPage: NextPage = () => {
           </div>
           <div className="grid w-3/4 grid-cols-2 gap-6">
             <fieldset>
-              <label
-                htmlFor="author"
-                className="mb-2 block text-sm font-medium text-gray-900  dark:text-white"
-              >
-                Author
-              </label>
-              <input
-                type="text"
+              <Label htmlFor="author">Author</Label>
+              <Input
                 id="author"
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 value={author}
                 onChange={(e) => setAuthor(e.target.value)}
               />
             </fieldset>
             <fieldset>
-              <label
-                htmlFor="title"
-                className="mb-2 block text-sm font-medium text-gray-900  dark:text-white"
-              >
-                Title
-              </label>
-              <input
-                type="text"
+              <Label htmlFor="title">Title</Label>
+              <Input
                 id="title"
-                required
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
             </fieldset>
           </div>
-
           <fieldset className="w-3/4">
-            <label
-              htmlFor="description"
-              className="mb-2 block text-sm font-medium text-gray-900  dark:text-white"
-            >
-              Description
-            </label>
+            <Label htmlFor="description">Description</Label>
             <textarea
               id="description"
               className="block h-40 w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
