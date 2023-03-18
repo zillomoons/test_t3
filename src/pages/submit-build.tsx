@@ -26,8 +26,30 @@ type TStep = {
   supply: number;
 };
 
+type TBuildStep = {
+  supply: number;
+  unit: string;
+  note: string;
+};
+
 const units: Record<races, TStep[]> = {
-  z: [{ name: "drone", supply: 1 }],
+  z: [
+    { name: "drone", supply: 1 },
+    { name: "zerglin", supply: 1 },
+    { name: "roach", supply: 2 },
+    { name: "overlord", supply: 0 },
+    { name: "ultralisk", supply: 6 },
+    { name: "queen", supply: 2 },
+    { name: "hydralisk", supply: 2 },
+    { name: "baneling", supply: 0 },
+    { name: "mutalisk", supply: 2 },
+    { name: "corruptur", supply: 2 },
+    { name: "infestor", supply: 2 },
+    { name: "swarm host", supply: 3 },
+    { name: "viper", supply: 3 },
+    { name: "brood lord", supply: 2 },
+    { name: "overseer", supply: 0 },
+  ],
   p: [],
   t: [],
 };
@@ -36,6 +58,18 @@ const Structures: Record<races, TStep[]> = {
     { name: "spawning pool", supply: -1 },
     { name: "hatchery", supply: -1 },
     { name: "extractor", supply: -1 },
+    { name: "evolution chamber", supply: -1 },
+    { name: "spore crawler", supply: -1 },
+    { name: "spine crawler", supply: -1 },
+    { name: "roach warren", supply: -1 },
+    { name: "baneling nest", supply: -1 },
+    { name: "lair", supply: -1 },
+    { name: "infestation pit", supply: -1 },
+    { name: "hydralisk den", supply: -1 },
+    { name: "nydus network", supply: -1 },
+    { name: "hive", supply: -1 },
+    { name: "ultralisk carn", supply: -1 },
+    { name: "greater spire", supply: -1 },
   ],
   p: [],
   t: [],
@@ -44,13 +78,14 @@ const Structures: Record<races, TStep[]> = {
 const SubmitBuildPage: NextPage = () => {
   const createBuildMutation = api.builds.createBuild.useMutation();
 
-  const [build, setBuildOrder] = useState("");
+  // const [build, setBuildOrder] = useState("");
   const [matchUp, setMatchUp] = useState("zvt");
   const [style, setStyle] = useState("macro");
   const [author, setAuthor] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [supply, setSupply] = useState(12);
+  const [buildSteps, setBuildSteps] = useState<TBuildStep[]>([]);
 
   const router = useRouter();
 
@@ -58,7 +93,7 @@ const SubmitBuildPage: NextPage = () => {
     e.preventDefault();
     await createBuildMutation.mutateAsync({
       matchUp,
-      build,
+      build: JSON.stringify(buildSteps),
       style,
       author,
       title,
@@ -66,8 +101,24 @@ const SubmitBuildPage: NextPage = () => {
     });
     void router.push("/");
   };
+
+  function updateNote(newNote: string, step: TBuildStep) {
+    setBuildSteps(
+      buildSteps.map((buildStep) =>
+        buildStep === step ? { ...buildStep, note: newNote } : buildStep
+      )
+    );
+  }
   function addToBuildOrder(stepName: TStep) {
-    setBuildOrder(build + "\n" + supply.toString() + " " + stepName.name);
+    // setBuildOrder(build + "\n" + supply.toString() + " " + stepName.name);
+    setBuildSteps([
+      ...buildSteps,
+      {
+        supply,
+        unit: stepName.name,
+        note: "",
+      },
+    ]);
     setSupply(supply + stepName.supply);
   }
   const race = matchUp.split("v")[0];
@@ -169,13 +220,42 @@ const SubmitBuildPage: NextPage = () => {
               >
                 Build Order
               </label>
-              <textarea
-                id="build"
-                required
-                className="block h-96 w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                value={build}
-                onChange={(e) => setBuildOrder(e.target.value)}
-              />
+
+              <div className="relative overflow-x-auto">
+                <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+                  <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                      <th scope="col" className="px-6 py-3">
+                        Supply
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Unit / Structure
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Note
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {buildSteps?.map((step, index) => (
+                      <tr
+                        key={index}
+                        className="border-b bg-white dark:border-gray-700 dark:bg-gray-800"
+                      >
+                        <td className="px-6 py-4">{step.supply}</td>
+                        <td className="px-6 py-4">{step.unit}</td>
+                        <td className="px-6 py-4">
+                          <input
+                            className="cursor-pointer bg-transparent outline-none hover:bg-white focus:bg-white focus:text-black"
+                            value={step.note}
+                            onChange={(e) => updateNote(e.target.value, step)}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </fieldset>
             <div className="grid w-1/2 grid-cols-2">
               <div className="flex flex-col items-start gap-2">
