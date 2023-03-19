@@ -1,3 +1,4 @@
+import { type BuildOrder } from "@prisma/client";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -6,11 +7,17 @@ import BuildCard from "~/components/BuildCard";
 import BuildStyleSelect from "~/components/BuildStyleSelect";
 import Input from "~/components/Input";
 import Label from "~/components/Label";
-import { buildStyles } from "~/pages/submit-build";
 import { api } from "~/utils/api";
 
+export const ALL_BUILD_TYPE = "all";
+
+export type EditableBuildOrderFields = Pick<
+  BuildOrder,
+  "author" | "description" | "title"
+>;
+
 const FindBuildsPage: NextPage = () => {
-  const [buildStyle, setBuildStyle] = useState(buildStyles[0]);
+  const [buildStyle, setBuildStyle] = useState(ALL_BUILD_TYPE);
   const [search, setSearch] = useState("");
 
   const { query } = useRouter();
@@ -33,15 +40,16 @@ const FindBuildsPage: NextPage = () => {
 
   const filteredBuilds = builds.data
     .filter((build) =>
-      buildStyle === "all" ? build : build.style === buildStyle
+      buildStyle === ALL_BUILD_TYPE ? build : build.style === buildStyle
     )
     .filter((build) =>
       search !== ""
-        ? ["author", "title", "description"].some((key) =>
-            ((build as Record<string, string>)[key] ?? "")
+        ? ["author", "title", "description"].some((key) => {
+            const subBuild = build as EditableBuildOrderFields;
+            return (subBuild[key as keyof EditableBuildOrderFields] ?? "")
               .toLowerCase()
-              .includes(lowerCaseSearch)
-          )
+              .includes(lowerCaseSearch);
+          })
         : build
     );
 

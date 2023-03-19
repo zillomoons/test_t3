@@ -28,6 +28,21 @@ export const buildsRouter = createTRPCRouter({
       })
       return build;
     }),
+  incrementBuildOrderView: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async({input, ctx}) => {
+      const build = await ctx.prisma.buildOrder.update({
+        where: {
+          id: input.id
+        },
+        data: {
+          views: {
+            increment: 1
+          }
+        }
+      });
+      return build;
+    }),
   
   getBuildsByMatchUp: publicProcedure
     .input(z.object({ matchUp: z.string() }))

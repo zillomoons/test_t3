@@ -1,13 +1,18 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { api } from "~/utils/api";
 
 const BuildPage: NextPage = () => {
   const { query } = useRouter();
   const { id = "" } = query as { id: string };
   const build = api.builds.getBuildById.useQuery({ id });
+  const { mutate } = api.builds.incrementBuildOrderView.useMutation();
 
+  useEffect(() => {
+    mutate({ id });
+  }, [id, mutate]);
   return (
     <>
       <Head>
@@ -17,6 +22,9 @@ const BuildPage: NextPage = () => {
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center gap-8 px-4 py-12 ">
         <h1 className="text-4xl">{build.data?.title}</h1>
+        <span>
+          <b>views:</b> {build.data?.views}
+        </span>
         <p className="bg-gray-500 p-4">{build.data?.build}</p>
       </main>
     </>

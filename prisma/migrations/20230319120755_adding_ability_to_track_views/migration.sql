@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "BuildOrder" ADD COLUMN     "view" INTEGER NOT NULL DEFAULT 0;
